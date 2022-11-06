@@ -126,7 +126,7 @@ export default {
         //分页器
         pageNo: 1,
         //每一页展示的数据个数
-        pageSize: 5,
+        pageSize: 3,
         //商品属性筛选参数
         props: [],
         //品牌

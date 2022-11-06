@@ -1,18 +1,21 @@
 <template>
     <div class="pagination">
         <button :disabled="pageNo == 1" @click="$emit('getPageNo', pageNo - 1)">上一页</button>
-        <button v-if="stratNumAndEndNum.start > 1" @click="$emit('getPageNo', 1)">1</button>
+        <button v-if="stratNumAndEndNum.start > 1" @click="$emit('getPageNo', 1)"
+            :class="{ active: pageNo == 1 }">1</button>
         <button v-if="stratNumAndEndNum.start > 2">···</button>
 
         <template v-for="(page, index) in stratNumAndEndNum.end">
-            <button v-if="page >= stratNumAndEndNum.start" :key="index" @click="$emit('getPageNo', page)">
+            <button v-if="page >= stratNumAndEndNum.start" :key="index" @click="$emit('getPageNo', page)"
+                :class="{ active: pageNo == page }">
                 {{ page }}
             </button>
         </template>
 
 
         <button v-if="stratNumAndEndNum.end < totalPage - 1">···</button>
-        <button v-if="stratNumAndEndNum.end < totalPage" @click="$emit('getPageNo', totalPage)">{{ totalPage }}</button>
+        <button v-if="stratNumAndEndNum.end < totalPage" @click="$emit('getPageNo', totalPage)"
+            :class="{ active: pageNo == totalPage }">{{ totalPage }}</button>
         <button :disabled="pageNo == totalPage" @click="$emit('getPageNo', pageNo + 1)">下一页</button>
 
         <button style="margin-left: 30px">共 {{ total }} 条结果</button>
@@ -34,7 +37,7 @@ export default {
             if (this.continues > this.totalPage) {
                 //连续页码大于总页数
                 start = 1
-                end = totalPage
+                end = this.totalPage
             } else {
                 //连续页码小于总页数
                 start = this.pageNo - parseInt(this.continues / 2)
@@ -88,6 +91,10 @@ export default {
             color: #fff;
         }
     }
+}
+
+.active {
+    background-color: skyblue;
 }
 </style>
   
