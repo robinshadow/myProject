@@ -24,3 +24,13 @@ export const reqGetFloorList = () => {
 export const reqSearchList = (params) => {
    return requests({ url: '/list', method: 'post', data: params })
 }
+
+//获取商品详情页信息
+export const reqGoodsInfo = (skuid) => {
+   return requests({ url: `/item/${skuid}`, method: 'get' })
+}
+
+//将产品添加到购物车中或更新购物车
+export const reqUpdateShopCart = (skuid, skuNum) => {
+   return requests({ url: `/cart/addToCart/${skuid}/${skuNum}`, method: 'post' })
+}
