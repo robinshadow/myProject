@@ -3,6 +3,8 @@ import axios from "axios";
 //引入进度条
 import nProgress from "nprogress";
 import 'nprogress/nprogress.css'
+//引入vuex仓库,处理游客临时身份
+import store from "@/store"
 
 const requests = axios.create({
     baseURL: '/api',
@@ -10,6 +12,10 @@ const requests = axios.create({
 })
 //请求拦截器,发请求之前处理一些逻辑
 requests.interceptors.request.use((config) => {
+    //把游客临时身份uuid放入请求头
+    if (store.state.detail.uuid_token) {
+        config.headers.userTempId = store.state.detail.uuid_token
+    }
     nProgress.start()
     //config:配置对象，包含headers请求头
     return config

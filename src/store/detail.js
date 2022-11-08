@@ -1,8 +1,12 @@
 import { reqGoodsInfo, reqUpdateShopCart } from '@/api'
+//封装游客临时身份uuid
+import { getUUID } from '@/utils/uuid_token'
 export default {
     namespaced: true,
     state: {
-        goodsInfo: {}
+        goodsInfo: {},
+        //游客临时身份
+        uuid_token: getUUID()
     },
     actions: {
         //获取商品详情信息

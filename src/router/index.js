@@ -15,6 +15,7 @@ import Register from '@/pages/Register'
 import Login from '@/pages/Login'
 import Detail from '@/pages/Detail'
 import AddCartSuccess from '@/pages/AddCartSuccess'
+import ShopCart from '@/pages/ShopCart'
 
 export default new VueRouter({
     routes: [
@@ -52,6 +53,12 @@ export default new VueRouter({
             name: 'addcartsuccess',
             path: '/addcartsuccess',
             component: AddCartSuccess,
+            meta: { show: true }
+        },
+        {
+            name: 'shopcart',
+            path: '/shopcart',
+            component: ShopCart,
             meta: { show: true }
         },
         //重定向
