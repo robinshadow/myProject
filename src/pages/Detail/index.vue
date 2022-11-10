@@ -387,8 +387,7 @@ export default {
         sessionStorage.setItem('skuInfo', JSON.stringify(this.skuInfo))
         this.$router.push({ name: 'addcartsuccess', query: { buyNum: this.buyNum } })
       } catch (err) {
-        alert('添加')
-        console.log(err.message);
+        alert(err.message);
       }
 
     }

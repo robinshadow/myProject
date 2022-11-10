@@ -19,6 +19,8 @@ import Detail from '@/pages/Detail'
 import AddCartSuccess from '@/pages/AddCartSuccess'
 import ShopCart from '@/pages/ShopCart'
 import Trade from '@/pages/Trade'
+import Pay from '@/pages/Pay'
+import PaySuccess from '@/pages/PaySuccess'
 
 let router = new VueRouter({
     routes: [
@@ -70,6 +72,18 @@ let router = new VueRouter({
             component: Trade,
             meta: { show: true }
         },
+        {
+            name: 'pay',
+            path: '/pay',
+            component: Pay,
+            meta: { show: true }
+        },
+        {
+            name: 'paysuccess',
+            path: '/paysuccess',
+            component: PaySuccess,
+            meta: { show: true }
+        },
         //重定向
         {
             path: '*',
@@ -103,7 +117,7 @@ router.beforeEach(async (to, from, next) => {
                     next()
                 } catch (err) {
                     //token失效,先清除token(走退出登录逻辑)，再跳转到登录界面
-                    await store.dispatch('user/userLoginout')
+                    await store.dispatch('user/userLogout')
                     next('/login')
                 }
             }
