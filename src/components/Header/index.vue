@@ -5,10 +5,16 @@
             <div class="container">
                 <div class="loginList">
                     <p>尚品汇欢迎您！</p>
-                    <p>
+                    <!-- 未登录 -->
+                    <p v-if="!userName">
                         <span>请</span>
                         <router-link to="/login">登录</router-link>
                         <router-link to="/register" class="register">免费注册</router-link>
+                    </p>
+                    <!-- 已登录 -->
+                    <p v-else>
+                        <a>{{ userName }}</a>
+                        <a class="register" @click="logout">注销</a>
                     </p>
                 </div>
                 <div class="typeList">
@@ -62,6 +68,16 @@ export default {
             location.query = this.$route.query
             this.$router.push(location)
         },
+        //退出登录
+        async logout() {
+            try {
+                await this.$store.dispatch('user/userLogout')
+                //退出成功回到首页
+                this.$router.push('/home')
+            } catch (err) {
+                console.log(err.message);
+            }
+        }
     },
     mounted() {
         //通过全局事件总线清除搜索框
@@ -69,6 +85,12 @@ export default {
             this.keyword = ''
         })
     },
+    computed: {
+        //用户名信息
+        userName() {
+            return this.$store.state.user.userInfo.name
+        }
+    }
 }
 </script>
 
@@ -95,6 +117,14 @@ export default {
                         border-left: 1px solid #b3aeae;
                         padding: 0 5px;
                         margin-left: 5px;
+                    }
+
+                    a {
+                        cursor: pointer;
+
+                        &:hover {
+                            text-decoration: underline;
+                        }
                     }
                 }
             }

@@ -18,7 +18,7 @@ export default {
             if (result.code === 200) {
                 return 'ok'
             } else {
-                return Promise.reject(new Error('fail'))
+                return Promise.reject(new Error(`${result.message}`))
             }
         },
         //修改购物车产品选中状态
@@ -27,7 +27,7 @@ export default {
             if (result.code === 200) {
                 return 'ok'
             } else {
-                return Promise.reject(new Error('fail'))
+                return Promise.reject(new Error(`${result.message}`))
             }
         },
         //删除选中的产品

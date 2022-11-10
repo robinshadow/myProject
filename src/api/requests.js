@@ -16,6 +16,11 @@ requests.interceptors.request.use((config) => {
     if (store.state.detail.uuid_token) {
         config.headers.userTempId = store.state.detail.uuid_token
     }
+    //携带token给服务器
+    if (store.state.user.token) {
+        config.headers.token = store.state.user.token
+    }
+    //进度条开始
     nProgress.start()
     //config:配置对象，包含headers请求头
     return config
@@ -23,6 +28,7 @@ requests.interceptors.request.use((config) => {
 
 //响应拦截器,服务器返回数据回来时检测到，处理一些逻辑
 requests.interceptors.response.use((res) => {
+    //进度条结束
     nProgress.done()
     return res.data
 }, (err) => {

@@ -24,6 +24,7 @@ export default {
     name: 'Home',
     components: { ListContainer, Recommend, Rank, Like, Floor, Brand },
     mounted() {
+        //派发action，获取floor组件数据
         this.$store.dispatch('home/getFloorList')
     },
     computed: {
@@ -31,7 +32,3 @@ export default {
     }
 }
 </script>
-
-<style>
-
-</style>
