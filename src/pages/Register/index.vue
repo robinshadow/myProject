@@ -3,35 +3,42 @@
     <!-- 注册内容 -->
     <div class="register">
       <h3>注册新用户
-        <span class="go">我有账号，去 <a href="login.html" target="_blank">登陆</a>
+        <span class="go">我有账号，去 <router-link to="/login">登陆</router-link>
         </span>
       </h3>
-      <div class="content">
-        <label>手机号:</label>
-        <input type="text" placeholder="请输入你的手机号" v-model="phone">
-        <span class="error-msg">错误提示信息</span>
-      </div>
-      <div class="content">
-        <label>验证码:</label>
-        <input type="text" placeholder="请输入验证码" v-model="code">
-        <button style="height:40px;width: 100px;" @click="getCode(phone)">获取验证码</button>
-        <span class="error-msg">错误提示信息</span>
-      </div>
-      <div class="content">
-        <label>登录密码:</label>
-        <input type="password" placeholder="请输入你的登录密码" v-model="password">
-        <span class="error-msg">错误提示信息</span>
-      </div>
-      <div class="content">
-        <label>确认密码:</label>
-        <input type="password" placeholder="请输入确认密码" v-model="confirmPsd">
-        <span class="error-msg">错误提示信息</span>
-      </div>
-      <div class="controls">
-        <input name="m1" type="checkbox" checked="agree">
-        <span>同意协议并注册《尚品汇用户协议》</span>
-        <span class="error-msg">错误提示信息</span>
-      </div>
+      <el-form :model="ValidateForm" :rules="rules" ref="ValidateForm" label-width="80px" class="demo-ruleForm">
+
+        <!-- 手机号 -->
+        <el-form-item label="手机号" prop="phone">
+          <el-input v-model.number="ValidateForm.phone" autocomplete="off" style="width:250px"></el-input>
+        </el-form-item>
+
+        <!-- 验证码 -->
+        <el-form-item label="验证码" prop="code" :rules="[
+          { required: true, message: '验证码不能为空' },
+        ]">
+          <el-input v-model.number="ValidateForm.code" autocomplete="off" style="width:100px"></el-input>
+          <button style="height:40px;width: 80px;margin-left: 5px;" @click="getCode(ValidateForm.phone)">获取验证码</button>
+        </el-form-item>
+
+        <!-- 密码 -->
+        <el-form-item label="密码" prop="password">
+          <el-input type="password" v-model="ValidateForm.password" autocomplete="off" style="width:350px"></el-input>
+        </el-form-item>
+
+        <!-- 确认密码 -->
+        <el-form-item label="确认密码" prop="confirmPsd">
+          <el-input type="password" v-model="ValidateForm.confirmPsd" autocomplete="off" style="width:350px"></el-input>
+        </el-form-item>
+
+        <!-- 同意用户协议 -->
+        <el-form-item prop="type" style="margin-left:30px" :rules="[
+          { required: true, message: '请阅读并同意用户协议' }
+        ]">
+          <el-checkbox label="同意协议并注册《尚品汇用户协议》" v-model="ValidateForm.agree"></el-checkbox>
+        </el-form-item>
+      </el-form>
+
       <div class="btn">
         <button @click="userRegister">完成注册</button>
       </div>
@@ -62,11 +69,20 @@ export default {
   data() {
     return {
       //收集表单数据
-      phone: '',
-      code: ' ',
-      password: '',
-      confirmPsd: '',
-      agree: true
+      ValidateForm: {
+        phone: '',
+        code: ' ',
+        password: '',
+        confirmPsd: '',
+        agree: true
+      },
+      //表单规则
+      rules: {
+        phone: [
+          { required: true, message: '手机号不能为空' },
+          { type: 'number', message: '手机号必须为数字值' },
+        ]
+      }
     }
   },
   methods: {
@@ -74,7 +90,7 @@ export default {
     getCode(phone) {
       if (phone) {
         this.$store.dispatch('user/getCode', phone)
-        this.code = this.$store.state.user.code
+        this.ValidateForm.code = this.$store.state.user.code
       } else {
         alert('手机号不能为空')
       }
@@ -82,18 +98,18 @@ export default {
     //用户注册
     async userRegister() {
       try {
-        if (!this.phone) {
+        if (!this.ValidateForm.phone) {
           alert('手机号不能为空')
-        } else if (!this.code) {
+        } else if (!this.ValidateForm.code) {
           alert('验证码不能为空')
-        } else if (this.password != this.confirmPsd) {
+        } else if (this.ValidateForm.password != this.ValidateForm.confirmPsd) {
           alert('两次输入密码不一致')
         } else {
-          await this.$store.dispatch('user/userRegister', { phone: this.phone, code: this.code, password: this.password })
+          await this.$store.dispatch('user/userRegister', { phone: this.ValidateForm.phone, code: this.ValidateForm.code, password: this.ValidateForm.password })
           this.$router.push('/login')
         }
       } catch (err) {
-        alert(err.message)
+        alert('信息没有填写完整')
       }
 
     }
@@ -128,14 +144,12 @@ export default {
       }
     }
 
-    div:nth-of-type(1) {
-      margin-top: 40px;
-    }
 
-    .content {
+    .el-form {
       padding-left: 390px;
       margin-bottom: 18px;
       position: relative;
+      margin-top: 30px;
 
       label {
         font-size: 14px;
@@ -145,13 +159,7 @@ export default {
       }
 
       input {
-        width: 270px;
-        height: 38px;
-        padding-left: 8px;
-        box-sizing: border-box;
-        margin-left: 5px;
-        outline: none;
-        border: 1px solid #999;
+        margin-left: 200px;
       }
 
       img {

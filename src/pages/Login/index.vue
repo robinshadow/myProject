@@ -84,7 +84,9 @@ export default {
           alert('请输入密码')
         } else {
           await this.$store.dispatch('user/userLogin', { phone: this.userName, password: this.password })
-          this.$router.push('/home')
+          //有query重定向参数跳转到重定向路径
+          let toPath = this.$route.query.redirect || '/home'
+          this.$router.push(toPath)
         }
       } catch (err) {
         alert(err.message)

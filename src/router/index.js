@@ -10,8 +10,8 @@ const originalPush = VueRouter.prototype.push
 VueRouter.prototype.push = function push(location) {
     return originalPush.call(this, location).catch(err => err)
 }
-
-import Home from '@/pages/Home'
+//采用懒加载
+/* import Home from '@/pages/Home'
 import Search from '@/pages/Search'
 import Register from '@/pages/Register'
 import Login from '@/pages/Login'
@@ -21,68 +21,108 @@ import ShopCart from '@/pages/ShopCart'
 import Trade from '@/pages/Trade'
 import Pay from '@/pages/Pay'
 import PaySuccess from '@/pages/PaySuccess'
+import Center from '@/pages/Center'
+//引入二级路由(我的订单)
+import MyOrder from '@/pages/Center/MyOrder'
+import GroupOrder from '@/pages/Center/GroupOrder' */
 
 let router = new VueRouter({
     routes: [
         {
             name: 'home',
             path: '/home',
-            component: Home,
+            component: () => import('@/pages/Home'),
             meta: { show: true }
         },
         {
             name: 'search',
             path: '/search/:keyword?',
-            component: Search,
+            component: () => import('@/pages/Search'),
             meta: { show: true },
         },
         {
             name: 'register',
             path: '/register',
-            component: Register,
+            component: () => import('@/pages/Register'),
             meta: { show: false }
         },
         {
             name: 'login',
             path: '/login',
-            component: Login,
+            component: () => import('@/pages/Login'),
             meta: { show: false }
         },
         {
             name: 'detail',
             path: '/detail/:skuid?',
-            component: Detail,
+            component: () => import('@/pages/Detail'),
             meta: { show: true }
         },
         {
             name: 'addcartsuccess',
             path: '/addcartsuccess',
-            component: AddCartSuccess,
+            component: () => import('@/pages/AddCartSuccess'),
             meta: { show: true }
         },
         {
             name: 'shopcart',
             path: '/shopcart',
-            component: ShopCart,
+            component: () => import('@/pages/ShopCart'),
             meta: { show: true }
         },
         {
             name: 'trade',
             path: '/trade',
-            component: Trade,
-            meta: { show: true }
+            component: () => import('@/pages/Trade'),
+            meta: { show: true },
+            //路由独享守卫，只有通过购物车才能来到交易页面
+            beforeEnter: (to, from, next) => {
+                if (from.path == '/shopcart') {
+                    next()
+                } else {
+                    next(false)
+                }
+            },
         },
         {
             name: 'pay',
             path: '/pay',
-            component: Pay,
-            meta: { show: true }
+            component: () => import('@/pages/Pay'),
+            meta: { show: true },
+            //只有提交订单才能来到支付页
+            beforeEnter: (to, from, next) => {
+                if (from.path == '/trade') {
+                    next()
+                } else {
+                    next(false)
+                }
+            },
         },
         {
             name: 'paysuccess',
             path: '/paysuccess',
-            component: PaySuccess,
+            component: () => import('@/pages/PaySuccess'),
             meta: { show: true }
+        },
+        {
+            name: 'center',
+            path: '/center',
+            component: () => import('@/pages/Center'),
+            meta: { show: true },
+            //重定向
+            redirect: '/center/myorder',
+            children: [
+                {
+                    name: 'myorder',
+                    path: 'myorder',
+                    component: () => import('@/pages/Center/MyOrder')
+                },
+                {
+                    name: 'grouporder',
+                    path: 'grouporder',
+                    component: () => import('@/pages/Center/GroupOrder')
+                }
+            ]
         },
         //重定向
         {
@@ -123,8 +163,13 @@ router.beforeEach(async (to, from, next) => {
             }
         }
     } else {
-        //未登录
-        next()
+        //未登录,不能跳转交易、支付、个人中心
+        if (to.path.indexOf('/trade') != -1 || to.path.indexOf('/pay') != -1 || to.path.indexOf('/center') != -1) {
+            //用query参数储存 未登录前想跳转的路由 登陆后跳转到该路由
+            next('/login?redirect=' + to.path)
+        } else {
+            next()
+        }
     }
 })
 export default router
